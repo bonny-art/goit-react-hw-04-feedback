@@ -2,35 +2,26 @@ import React, { useState } from 'react';
 import { Section, Statistics, FeedbackOptions, Notification } from 'components';
 
 export const App = () => {
-  const [good, setGood] = useState(0);
-  const [neutral, setNeutral] = useState(0);
-  const [bad, setBad] = useState(0);
+  const [feedback, setFeedback] = useState({
+    good: 0,
+    neutral: 0,
+    bad: 0,
+  });
 
   const countFeedback = statsKey => {
-    switch (statsKey) {
-      case 'good':
-        setGood(prev => prev + 1);
-        break;
-      case 'neutral':
-        setNeutral(prev => prev + 1);
-        break;
-      case 'bad':
-        setBad(prev => prev + 1);
-        break;
-      default:
-        return;
-    }
+    setFeedback(prev => ({ ...prev, [statsKey]: prev[statsKey] + 1 }));
   };
 
-  const countTotalFeedback = () => good + neutral + bad;
+  const countTotalFeedback = () =>
+    feedback.good + feedback.neutral + feedback.bad;
 
   const countPositiveFeedbackPercentage = () =>
-    Math.round(100 * (good / countTotalFeedback())) || 0;
+    Math.round(100 * (feedback.good / countTotalFeedback())) || 0;
 
   const totalFeedback = countTotalFeedback();
   const positiveFeedbackPercentage = countPositiveFeedbackPercentage();
 
-  const statsKeys = ['good', 'neutral', 'bad'];
+  const statsKeys = Object.keys(feedback);
 
   return (
     <div>
@@ -42,7 +33,7 @@ export const App = () => {
         {totalFeedback > 0 ? (
           <Statistics
             statsKeys={statsKeys}
-            statsData={{ good, neutral, bad }}
+            statsData={feedback}
             total={totalFeedback}
             positivePercentage={positiveFeedbackPercentage}
           />
